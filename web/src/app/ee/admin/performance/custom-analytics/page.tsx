@@ -2,8 +2,9 @@ import * as SettingsLayouts from "@/layouts/settings-layouts";
 import { CUSTOM_ANALYTICS_ENABLED } from "@/lib/constants";
 import { Callout } from "@/components/ui/callout";
 import { ADMIN_ROUTES } from "@/lib/admin-routes";
-import Text from "@/components/ui/text";
+import { Text } from "@opal/components";
 import { CustomAnalyticsUpdateForm } from "./CustomAnalyticsUpdateForm";
+import Spacer from "@/refresh-components/Spacer";
 
 const route = ADMIN_ROUTES.CUSTOM_ANALYTICS;
 
@@ -24,11 +25,12 @@ function Main() {
 
   return (
     <div>
-      <Text className="mb-8">
+      <Text as="p">
         This allows you to bring your own analytics tool to Onyx! Copy the Web
         snippet from your analytics provider into the box below, and we&apos;ll
         start sending usage events.
       </Text>
+      <Spacer rem={2} />
 
       <CustomAnalyticsUpdateForm />
     </div>

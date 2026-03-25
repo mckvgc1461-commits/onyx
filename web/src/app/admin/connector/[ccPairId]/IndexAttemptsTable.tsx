@@ -9,7 +9,7 @@ import {
   TableCell,
   TableHeader,
 } from "@/components/ui/table";
-import Text from "@/components/ui/text";
+import { Text } from "@opal/components";
 import { Callout } from "@/components/ui/callout";
 import { CCPairFullInfo } from "./types";
 import { IndexAttemptSnapshot } from "@/lib/types";
@@ -154,14 +154,14 @@ export function IndexAttemptsTable({
                 </TableCell>
                 <TableCell>
                   {indexAttempt.status === "success" && (
-                    <Text className="flex flex-wrap whitespace-normal">
+                    <Text as="p" preventMarkdown>
                       {"-"}
                     </Text>
                   )}
 
                   {indexAttempt.status === "failed" &&
                     indexAttempt.error_msg && (
-                      <Text className="flex flex-wrap whitespace-normal">
+                      <Text as="p" preventMarkdown>
                         {indexAttempt.error_msg}
                       </Text>
                     )}

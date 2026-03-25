@@ -10,7 +10,8 @@ import {
   TableBody,
   TableCell,
 } from "@/components/ui/table";
-import Text from "@/components/ui/text";
+import { Text } from "@opal/components";
+import Spacer from "@/refresh-components/Spacer";
 import Title from "@/components/ui/title";
 import Separator from "@/refresh-components/Separator";
 import { DocumentSetSummary } from "@/lib/types";
@@ -393,11 +394,12 @@ function Main() {
 
   return (
     <div className="mb-8">
-      <Text className="mb-3">
+      <Text as="p" preventMarkdown>
         <b>Document Sets</b> allow you to group logically connected documents
         into a single bundle. These can then be used as a filter when performing
         searches to control the scope of information Onyx searches over.
       </Text>
+      <Spacer rem={0.75} />
 
       <div className="mb-3"></div>
 

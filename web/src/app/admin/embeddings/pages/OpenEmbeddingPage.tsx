@@ -1,7 +1,8 @@
 "use client";
 
 import Button from "@/refresh-components/buttons/Button";
-import Text from "@/components/ui/text";
+import { Text } from "@opal/components";
+import Spacer from "@/refresh-components/Spacer";
 import Title from "@/components/ui/title";
 import { ModelSelector } from "../../../../components/embedding/ModelSelector";
 import {
@@ -25,36 +26,36 @@ export default function OpenEmbeddingPage({
       <Title className="mt-8">
         Here are some locally-hosted models to choose from.
       </Title>
-      <Text className="mb-4">
+      <Text as="p">
         These models can be used without any API keys, and can leverage a GPU
         for faster inference.
       </Text>
+      <Spacer rem={1} />
       <ModelSelector
         modelOptions={AVAILABLE_MODELS}
         setSelectedModel={onSelectOpenSource}
         currentEmbeddingModel={selectedProvider}
       />
 
-      <Text className="mt-6">
+      <Spacer rem={1.5} />
+      <Text as="p" preventMarkdown>
         Alternatively, (if you know what you&apos;re doing) you can specify a{" "}
-        <a
-          target="_blank"
-          href="https://www.sbert.net/"
-          className="text-link"
-          rel="noreferrer"
-        >
-          SentenceTransformers
-        </a>
+        <span className="text-link">
+          <a target="_blank" href="https://www.sbert.net/" rel="noreferrer">
+            SentenceTransformers
+          </a>
+        </span>
         -compatible model of your choice below. The rough list of supported
         models can be found{" "}
-        <a
-          target="_blank"
-          href="https://huggingface.co/models?library=sentence-transformers&sort=trending"
-          className="text-link"
-          rel="noreferrer"
-        >
-          here
-        </a>
+        <span className="text-link">
+          <a
+            target="_blank"
+            href="https://huggingface.co/models?library=sentence-transformers&sort=trending"
+            rel="noreferrer"
+          >
+            here
+          </a>
+        </span>
         .
         <br />
         <b>NOTE:</b> not all models listed will work with Onyx, since some have
