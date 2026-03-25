@@ -19,11 +19,14 @@ import {
 import {
   activateVoiceProvider,
   deactivateVoiceProvider,
+  deleteVoiceProvider,
 } from "@/lib/admin/voice/svc";
 import { ThreeDotsLoader } from "@/components/Loading";
 import { Callout } from "@/components/ui/callout";
 import { Content } from "@opal/layouts";
-import { SvgMicrophone } from "@opal/icons";
+import { SvgMicrophone, SvgUnplug } from "@opal/icons";
+import { Button as OpalButton } from "@opal/components";
+import ConfirmationModalLayout from "@/refresh-components/layouts/ConfirmationModalLayout";
 import { ADMIN_ROUTES } from "@/lib/admin-routes";
 import VoiceProviderSetupModal from "@/app/admin/configuration/voice/VoiceProviderSetupModal";
 
@@ -146,6 +149,11 @@ export default function VoiceConfigurationPage() {
   const [ttsActivationError, setTTSActivationError] = useState<string | null>(
     null
   );
+  const [disconnectTarget, setDisconnectTarget] = useState<{
+    providerId: number;
+    label: string;
+    providerType: string;
+  } | null>(null);
 
   const { providers, error, isLoading, refresh: mutate } = useVoiceProviders();
 
@@ -237,6 +245,28 @@ export default function VoiceConfigurationPage() {
     handleModalClose();
   };
 
+  const handleDisconnect = async () => {
+    if (!disconnectTarget) return;
+    try {
+      const response = await deleteVoiceProvider(disconnectTarget.providerId);
+      if (!response.ok) {
+        const errorBody = await response.json().catch(() => ({}));
+        throw new Error(
+          typeof errorBody?.detail === "string"
+            ? errorBody.detail
+            : "Failed to disconnect provider."
+        );
+      }
+      await mutate();
+    } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Unexpected error occurred.";
+      setSTTActivationError(message);
+    } finally {
+      setDisconnectTarget(null);
+    }
+  };
+
   const isProviderConfigured = (provider?: VoiceProviderView): boolean => {
     return !!provider?.has_api_key;
   };
@@ -289,6 +319,17 @@ export default function VoiceConfigurationPage() {
         onEdit={() => {
           if (provider) handleEdit(provider, mode, model.id);
         }}
+        onDisconnect={
+          status !== "disconnected" && provider
+            ? () =>
+                setDisconnectTarget({
+                  providerId: provider.id,
+                  label: model.label,
+                  providerType: model.providerType,
+                })
+            : undefined
+        }
+        disconnectDisabled={status === "selected"}
       />
     );
   };
@@ -411,6 +452,23 @@ export default function VoiceConfigurationPage() {
           ))}
         </div>
       </SettingsLayouts.Body>
+
+      {disconnectTarget && (
+        <ConfirmationModalLayout
+          icon={SvgUnplug}
+          title={`Disconnect ${disconnectTarget.label}`}
+          description="This will remove the stored credentials. All voice models from this provider will be disconnected."
+          onClose={() => setDisconnectTarget(null)}
+          submit={
+            <OpalButton
+              variant="danger"
+              onClick={() => void handleDisconnect()}
+            >
+              Disconnect
+            </OpalButton>
+          }
+        />
+      )}
 
       {modalOpen && selectedProvider && (
         <VoiceProviderSetupModal

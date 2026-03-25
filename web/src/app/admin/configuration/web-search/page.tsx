@@ -12,9 +12,11 @@ import { errorHandlingFetcher, FetchError } from "@/lib/fetcher";
 import { ThreeDotsLoader } from "@/components/Loading";
 import { Callout } from "@/components/ui/callout";
 import { cn } from "@/lib/utils";
-import { SvgGlobe, SvgOnyxLogo } from "@opal/icons";
+import { SvgGlobe, SvgOnyxLogo, SvgUnplug } from "@opal/icons";
+import { Button as OpalButton } from "@opal/components";
 import { ADMIN_ROUTES } from "@/lib/admin-routes";
 import { WebProviderSetupModal } from "@/app/admin/configuration/web-search/WebProviderSetupModal";
+import ConfirmationModalLayout from "@/refresh-components/layouts/ConfirmationModalLayout";
 import {
   SEARCH_PROVIDERS_URL,
   SEARCH_PROVIDER_DETAILS,
@@ -71,6 +73,12 @@ export default function Page() {
     WebProviderModalReducer,
     initialWebProviderModalState
   );
+  const [disconnectTarget, setDisconnectTarget] = useState<{
+    id: number;
+    label: string;
+    category: "search" | "content";
+    providerType: string;
+  } | null>(null);
   const [contentModal, dispatchContentModal] = useReducer(
     WebProviderModalReducer,
     initialWebProviderModalState
@@ -797,6 +805,40 @@ export default function Page() {
     });
   };
 
+  const handleDisconnectProvider = async () => {
+    if (!disconnectTarget) return;
+    const { id, category, providerType } = disconnectTarget;
+
+    try {
+      const response = await fetch(
+        `/api/admin/web-search/${category}-providers/${id}`,
+        { method: "DELETE" }
+      );
+
+      if (!response.ok) {
+        const errorBody = await response.json().catch(() => ({}));
+        throw new Error(
+          typeof errorBody?.detail === "string"
+            ? errorBody.detail
+            : "Failed to disconnect provider."
+        );
+      }
+
+      await mutateSearchProviders();
+      await mutateContentProviders();
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : "Unexpected error occurred.";
+      if (category === "search") {
+        setActivationError(message);
+      } else {
+        setContentActivationError(message);
+      }
+    } finally {
+      setDisconnectTarget(null);
+    }
+  };
+
   return (
     <>
       <SettingsLayouts.Root>
@@ -919,6 +961,18 @@ export default function Page() {
                             }
                           : undefined
                       }
+                      onDisconnect={
+                        isConfigured && provider && provider.id > 0
+                          ? () =>
+                              setDisconnectTarget({
+                                id: provider.id,
+                                label,
+                                category: "search",
+                                providerType,
+                              })
+                          : undefined
+                      }
+                      disconnectDisabled={isActive}
                     />
                   );
                 }
@@ -1020,6 +1074,20 @@ export default function Page() {
                           }
                         : undefined
                     }
+                    onDisconnect={
+                      provider.provider_type !== "onyx_web_crawler" &&
+                      isConfigured &&
+                      provider.id > 0
+                        ? () =>
+                            setDisconnectTarget({
+                              id: provider.id,
+                              label,
+                              category: "content",
+                              providerType: provider.provider_type,
+                            })
+                        : undefined
+                    }
+                    disconnectDisabled={isCurrentCrawler}
                   />
                 );
               })}
@@ -1027,6 +1095,23 @@ export default function Page() {
           </div>
         </SettingsLayouts.Body>
       </SettingsLayouts.Root>
+
+      {disconnectTarget && (
+        <ConfirmationModalLayout
+          icon={SvgUnplug}
+          title={`Disconnect ${disconnectTarget.label}`}
+          description="This will remove the stored credentials for this provider."
+          onClose={() => setDisconnectTarget(null)}
+          submit={
+            <OpalButton
+              variant="danger"
+              onClick={() => void handleDisconnectProvider()}
+            >
+              Disconnect
+            </OpalButton>
+          }
+        />
+      )}
 
       <WebProviderSetupModal
         isOpen={selectedProviderType !== null}
