@@ -22,6 +22,7 @@ import {
   deleteVoiceProvider,
 } from "@/lib/admin/voice/svc";
 import { ThreeDotsLoader } from "@/components/Loading";
+import { toast } from "@/hooks/useToast";
 import { Callout } from "@/components/ui/callout";
 import { Content } from "@opal/layouts";
 import { SvgMicrophone, SvgUnplug } from "@opal/icons";
@@ -153,6 +154,7 @@ export default function VoiceConfigurationPage() {
     providerId: number;
     label: string;
     providerType: string;
+    mode: ProviderMode;
   } | null>(null);
 
   const { providers, error, isLoading, refresh: mutate } = useVoiceProviders();
@@ -247,6 +249,10 @@ export default function VoiceConfigurationPage() {
 
   const handleDisconnect = async () => {
     if (!disconnectTarget) return;
+    const setError =
+      disconnectTarget.mode === "stt"
+        ? setSTTActivationError
+        : setTTSActivationError;
     try {
       const response = await deleteVoiceProvider(disconnectTarget.providerId);
       if (!response.ok) {
@@ -257,11 +263,12 @@ export default function VoiceConfigurationPage() {
             : "Failed to disconnect provider."
         );
       }
+      toast.success(`${disconnectTarget.label} disconnected`);
       await mutate();
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Unexpected error occurred.";
-      setSTTActivationError(message);
+      setError(message);
     } finally {
       setDisconnectTarget(null);
     }
@@ -326,6 +333,7 @@ export default function VoiceConfigurationPage() {
                   providerId: provider.id,
                   label: model.label,
                   providerType: model.providerType,
+                  mode,
                 })
             : undefined
         }

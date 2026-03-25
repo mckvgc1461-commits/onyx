@@ -12,6 +12,7 @@ import { errorHandlingFetcher, FetchError } from "@/lib/fetcher";
 import { ThreeDotsLoader } from "@/components/Loading";
 import { Callout } from "@/components/ui/callout";
 import { cn } from "@/lib/utils";
+import { toast } from "@/hooks/useToast";
 import { SvgGlobe, SvgOnyxLogo, SvgUnplug } from "@opal/icons";
 import { Button as OpalButton } from "@opal/components";
 import { ADMIN_ROUTES } from "@/lib/admin-routes";
@@ -807,7 +808,7 @@ export default function Page() {
 
   const handleDisconnectProvider = async () => {
     if (!disconnectTarget) return;
-    const { id, category, providerType } = disconnectTarget;
+    const { id, category } = disconnectTarget;
 
     try {
       const response = await fetch(
@@ -824,6 +825,7 @@ export default function Page() {
         );
       }
 
+      toast.success(`${disconnectTarget.label} disconnected`);
       await mutateSearchProviders();
       await mutateContentProviders();
     } catch (error) {

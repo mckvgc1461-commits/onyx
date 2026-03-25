@@ -156,14 +156,20 @@ export default function Select({
               </Disabled>
               <div className="flex px-1 gap-1">
                 {onDisconnect && (
-                  <Button
-                    icon={SvgUnplug}
-                    tooltip="Disconnect"
-                    prominence="tertiary"
-                    size="sm"
-                    onClick={noProp(onDisconnect)}
-                    aria-label={`Disconnect ${title}`}
-                  />
+                  <Disabled disabled={disabled || disconnectDisabled}>
+                    <Button
+                      icon={SvgUnplug}
+                      tooltip={
+                        disconnectDisabled
+                          ? "Deselect before disconnecting"
+                          : "Disconnect"
+                      }
+                      prominence="tertiary"
+                      size="sm"
+                      onClick={noProp(onDisconnect)}
+                      aria-label={`Disconnect ${title}`}
+                    />
+                  </Disabled>
                 )}
                 {onEdit && (
                   <Disabled disabled={disabled}>
@@ -196,14 +202,20 @@ export default function Select({
               </Disabled>
               <div className="flex px-1 gap-1">
                 {onDisconnect && (
-                  <Button
-                    icon={SvgUnplug}
-                    tooltip="Disconnect"
-                    prominence="tertiary"
-                    size="sm"
-                    onClick={noProp(onDisconnect)}
-                    aria-label={`Disconnect ${title}`}
-                  />
+                  <Disabled disabled={disabled || disconnectDisabled}>
+                    <Button
+                      icon={SvgUnplug}
+                      tooltip={
+                        disconnectDisabled
+                          ? "Deselect before disconnecting"
+                          : "Disconnect"
+                      }
+                      prominence="tertiary"
+                      size="sm"
+                      onClick={noProp(onDisconnect)}
+                      aria-label={`Disconnect ${title}`}
+                    />
+                  </Disabled>
                 )}
                 {onEdit && (
                   <Disabled disabled={disabled}>
