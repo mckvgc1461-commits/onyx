@@ -2,11 +2,10 @@
 
 import { useRef } from "react";
 import { SvgPlusCircle, SvgMinusCircle } from "@opal/icons";
-import { Button } from "@opal/components";
+import { Button, Text } from "@opal/components";
 import { Section } from "@/layouts/general-layouts";
 import Card from "@/refresh-components/cards/Card";
 import InputNumber from "@/refresh-components/inputs/InputNumber";
-import Text from "@/refresh-components/texts/Text";
 import IconButton from "@/refresh-components/buttons/IconButton";
 import SimpleCollapsible from "@/refresh-components/SimpleCollapsible";
 
@@ -85,20 +84,24 @@ function TokenLimitSection({ limits, onLimitsChange }: TokenLimitSectionProps) {
             {/* Column headers */}
             <div className="flex flex-wrap items-center gap-1 pr-[40px]">
               <div className="flex-1 flex items-center min-w-[160px]">
-                <Text mainUiAction text04>
+                <Text font="main-ui-action" color="text-04">
                   Token Limit
                 </Text>
-                <Text mainUiMuted text03 className="ml-0.5">
-                  (thousand tokens)
-                </Text>
+                <span className="ml-0.5">
+                  <Text font="main-ui-muted" color="text-03">
+                    (thousand tokens)
+                  </Text>
+                </span>
               </div>
               <div className="flex-1 flex items-center min-w-[160px]">
-                <Text mainUiAction text04>
+                <Text font="main-ui-action" color="text-04">
                   Time Window
                 </Text>
-                <Text mainUiMuted text03 className="ml-0.5">
-                  (hours)
-                </Text>
+                <span className="ml-0.5">
+                  <Text font="main-ui-muted" color="text-03">
+                    (hours)
+                  </Text>
+                </span>
               </div>
             </div>
 

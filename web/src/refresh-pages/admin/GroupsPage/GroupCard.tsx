@@ -6,8 +6,7 @@ import { SvgChevronRight, SvgUserManage, SvgUsers } from "@opal/icons";
 import { ContentAction } from "@opal/layouts";
 import { Section } from "@/layouts/general-layouts";
 import Card from "@/refresh-components/cards/Card";
-import { Button } from "@opal/components";
-import Text from "@/refresh-components/texts/Text";
+import { Button, Text } from "@opal/components";
 import {
   isBuiltInGroup,
   buildGroupDescription,
@@ -54,7 +53,7 @@ function GroupCard({ group }: GroupCardProps) {
         rightChildren={
           <Section flexDirection="row" alignItems="start" gap={0}>
             <div className="py-1">
-              <Text mainUiBody text03>
+              <Text font="main-ui-body" color="text-03" preventMarkdown>
                 {formatMemberCount(
                   group.users.filter((u) => u.is_active).length
                 )}
