@@ -9,6 +9,7 @@ import {
   InfoIcon,
   OpenAIIcon,
 } from "@/components/icons/icons";
+// TODO(@raunakab): migrate this `refresh-components/Text` to `@opal/components` Text
 import Text from "@/refresh-components/texts/Text";
 import Separator from "@/refresh-components/Separator";
 import { FetchError } from "@/lib/fetcher";
